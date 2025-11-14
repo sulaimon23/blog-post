@@ -1,0 +1,50 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: users-posts-backend
+    ports:
+      - "${BACKEND_PORT:-3001}:3001"
+    environment:
+      - PORT=${BACKEND_PORT:-3001}
+      - DB_PATH=${DB_PATH:-./data.db}
+    volumes:
+      - ./backend/src:/app/src
+      - ./backend/config:/app/config
+      - ./backend/data.db:/app/data.db
+      - ./backend/package.json:/app/package.json
+      - ./backend/tsconfig.json:/app/tsconfig.json
+      - /app/node_modules
+    networks:
+      - app-network
+    command: npm run dev
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: users-posts-frontend
+    ports:
+      - "${FRONTEND_PORT:-3000}:5173"
+    environment:
+      - VITE_API_BASE_URL=${VITE_API_BASE_URL:-http://localhost:3001}
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+      - ./frontend/index.html:/app/index.html
+      - ./frontend/vite.config.ts:/app/vite.config.ts
+      - ./frontend/package.json:/app/package.json
+      - ./frontend/tsconfig.json:/app/tsconfig.json
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - app-network
+    stdin_open: true
+    tty: true
+    command: npm run dev
+
+networks:
+  app-network:
+    driver: bridge

@@ -1,3 +1,72 @@
+
+## Running the Application
+
+### Prerequisites
+
+- Docker and Docker Compose installed
+- Make (optional, for using Makefile commands)
+
+### Using Docker
+
+1. **Copy environment variables:**
+   ```bash
+   cp .env.example .env
+   ```
+   Edit `.env` file if you need to change default ports or configuration.
+
+2. **Start the application:**
+   ```bash
+   make dev
+   ```
+   This starts both applications with hot reload - changes are automatically reflected without rebuilding.
+
+   Or run in background:
+   ```bash
+   make up
+   ```
+
+3. **Access the application:**
+   - Frontend: http://localhost:3000 (or the port specified in `.env`)
+   - Backend API: http://localhost:3001 (or the port specified in `.env`)
+
+4. **View logs:**
+   ```bash
+   make logs
+   ```
+
+5. **Stop the application:**
+   ```bash
+   make down
+   ```
+
+6. **Clean up:**
+   ```bash
+   make clean
+   ```
+
+### Makefile Commands
+
+- `make dev` - Start application with hot reload
+- `make up` - Start containers in background
+- `make down` - Stop containers
+- `make logs` - View container logs
+- `make clean` - Remove containers and images
+
+### Environment Variables
+
+Create a `.env` file in the root directory with the following variables:
+
+```env
+NODE_ENV=production
+BACKEND_PORT=3001
+FRONTEND_PORT=3000
+DB_PATH=./data.db
+VITE_API_BASE_URL=http://localhost:3001
+```
+
+For Docker deployment, ensure `VITE_API_BASE_URL` points to your backend URL (e.g., `http://localhost:3001` or your production backend URL).
+
+
 # Web Developer Assignment
 
 This full-stack assignment involves building a user management system where developers must extend a Node.js/SQLite backend for user and post operations, and create a React/TypeScript frontend that displays user data in a paginated table and allows for post management, all while following provided design specifications.
