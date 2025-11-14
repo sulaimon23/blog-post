@@ -28,7 +28,7 @@ export default function UserPostsPage() {
         userId
     );
     const { users } = useUsersWithPagination(0, 1000);
-    const userData = users?.find((u) => u.id === userId);
+    const userData = Array.isArray(users) ? users.find((u) => u.id === userId) : undefined;
     const user = userData ? mapUserResponseToUser(userData) : undefined;
     const createPostMutation = useCreatePost();
     const deletePostMutation = useDeletePost(userId || '');
@@ -76,11 +76,11 @@ export default function UserPostsPage() {
                     </h1>
                     <p className="w-full text-sm-normal">
                         <span className="text-text-muted">{user?.email || ''} </span>
-                        <span className="text-text-base">• {posts?.length || 0} {posts?.length === 1 ? 'Post' : 'Posts'}</span>
+                        <span className="text-text-base">• {Array.isArray(posts) ? posts.length : 0} {Array.isArray(posts) && posts.length === 1 ? 'Post' : 'Posts'}</span>
                     </p>
                 </header>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full">
-                    {userId && (
+                    {!postsLoading && userId && (
                         <NewPostCard
                             userId={userId}
                             onCreatePost={handleCreatePost}
@@ -97,7 +97,7 @@ export default function UserPostsPage() {
                                 Failed to load posts
                             </CardContent>
                         </Card>
-                    ) : posts && posts.length > 0 ? (
+                    ) : Array.isArray(posts) && posts.length > 0 ? (
                         posts.map((post) => (
                             <Card
                                 key={post.id}

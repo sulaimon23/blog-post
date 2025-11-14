@@ -7,13 +7,15 @@ import { toast } from 'sonner';
 export function usePosts(userId: string | number | undefined) {
     return useQuery({
         queryKey: [QUERY_KEYS.POSTS, userId],
-        queryFn: () => {
+        queryFn: async () => {
             if (!userId) throw new Error('User ID is required');
-            return postsApi.getPostsByUserId(userId);
+            const posts = await postsApi.getPostsByUserId(userId);
+            return Array.isArray(posts) ? posts : [];
         },
         enabled: !!userId,
         staleTime: 30000,
         retry: 2,
+        placeholderData: (prev) => (Array.isArray(prev) ? prev : []),
     });
 }
 

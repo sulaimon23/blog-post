@@ -15,9 +15,13 @@ export function useUsers(params: PaginationParams) {
 export function useUsersCount() {
     return useQuery({
         queryKey: [QUERY_KEYS.USERS_COUNT],
-        queryFn: () => usersApi.getUsersCount(),
+        queryFn: async () => {
+            const count = await usersApi.getUsersCount();
+            return count ?? 0;
+        },
         staleTime: 60000,
         retry: 2,
+        placeholderData: 0,
     });
 }
 
@@ -27,16 +31,22 @@ export function useUsersWithPagination(
 ) {
     const usersQuery = useQuery({
         queryKey: [QUERY_KEYS.USERS, pageNumber, pageSize],
-        queryFn: () => usersApi.getUsers({ pageNumber, pageSize }),
+        queryFn: async () => {
+            const users = await usersApi.getUsers({ pageNumber, pageSize });
+            return Array.isArray(users) ? users : [];
+        },
         staleTime: 30000,
         retry: 2,
-        placeholderData: (prev) => prev,
+        placeholderData: (prev) => (Array.isArray(prev) ? prev : []),
     });
     const countQuery = useUsersCount();
 
+    const users = usersQuery.data ?? [];
+    const count = countQuery.data ?? 0;
+
     return {
-        users: usersQuery.data ?? [],
-        count: countQuery.data ?? 0,
+        users: Array.isArray(users) ? users : [],
+        count: typeof count === 'number' ? count : 0,
         isLoading: usersQuery.isLoading || countQuery.isLoading,
         isError: usersQuery.isError || countQuery.isError,
         error: usersQuery.error || countQuery.error,
