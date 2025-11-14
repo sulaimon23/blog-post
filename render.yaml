@@ -21,5 +21,5 @@ services:
     staticPublishPath: frontend/dist
     envVars:
       - key: VITE_API_BASE_URL
-        value: https://users-posts-backend.onrender.com
+        value: https://users-posts-backend-yk4a.onrender.com
 
