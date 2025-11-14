@@ -149,7 +149,7 @@ export default function UsersPage() {
                             variant="ghost"
                             onClick={() => setPageNumber((p) => (p > 0 ? p - 1 : 0))}
                             disabled={!hasPrevPage}
-                            className="inline-flex gap-1 pl-2.5 pr-4 py-0 h-auto items-center justify-center rounded-md"
+                            className="inline-flex gap-1 pl-2.5 pr-4 py-0 items-center justify-center rounded-md"
                         >
                             <ChevronLeft className="w-4 h-4" />
                             <span className="hidden sm:inline text-sm-medium text-text-base">
@@ -220,7 +220,7 @@ export default function UsersPage() {
                             variant="ghost"
                             onClick={() => setPageNumber((p) => p + 1)}
                             disabled={!hasNextPage}
-                            className="inline-flex h-auto items-center justify-center gap-1 pl-4 pr-2.5 py-0 rounded-md"
+                            className="inline-flex items-center justify-center gap-1 pl-4 pr-2.5 py-0 rounded-md"
                         >
                             <span className="text-sm-medium text-text-base">
                                 Next

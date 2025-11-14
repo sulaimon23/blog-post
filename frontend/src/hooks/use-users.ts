@@ -25,7 +25,13 @@ export function useUsersWithPagination(
     pageNumber: number = PAGINATION.DEFAULT_PAGE_NUMBER,
     pageSize: number = PAGINATION.DEFAULT_PAGE_SIZE
 ) {
-    const usersQuery = useUsers({ pageNumber, pageSize });
+    const usersQuery = useQuery({
+        queryKey: [QUERY_KEYS.USERS, pageNumber, pageSize],
+        queryFn: () => usersApi.getUsers({ pageNumber, pageSize }),
+        staleTime: 30000,
+        retry: 2,
+        placeholderData: (prev) => prev,
+    });
     const countQuery = useUsersCount();
 
     return {
