@@ -62,7 +62,7 @@ export function NewPostCard({ userId, onCreatePost, isCreating, disabled }: NewP
             </Card>
 
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogContent>
+                <DialogContent className='max-w-2xl'>
                     <DialogHeader>
                         <DialogTitle className="text-left text-4xl font-medium">New Post</DialogTitle>
                     </DialogHeader>
