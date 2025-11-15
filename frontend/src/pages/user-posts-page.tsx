@@ -24,7 +24,7 @@ export default function UserPostsPage() {
     const { userId } = useParams<{ userId: string }>();
     const navigate = useNavigate();
 
-    const { data: posts, isLoading: postsLoading, isError: postsError } = usePosts(
+    const { data: posts, isLoading: postsLoading, isFetching: postsFetching, isError: postsError } = usePosts(
         userId
     );
     const { users } = useUsersWithPagination(0, 1000);
@@ -80,14 +80,15 @@ export default function UserPostsPage() {
                     </p>
                 </header>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full">
-                    {!postsLoading && userId && (
+                    {userId && (
                         <NewPostCard
                             userId={userId}
                             onCreatePost={handleCreatePost}
                             isCreating={createPostMutation.isPending}
+                            disabled={postsLoading || postsFetching}
                         />
                     )}
-                    {postsLoading ? (
+                    {postsLoading || postsFetching ? (
                         <div className="col-span-full">
                             <Loader />
                         </div>
@@ -123,13 +124,13 @@ export default function UserPostsPage() {
                                 </CardContent>
                             </Card>
                         ))
-                    ) : (
+                    ) : !postsLoading && !postsFetching && Array.isArray(posts) && posts.length === 0 ? (
                         <Card className="flex flex-col h-[293px] w-full md:w-[270px] bg-white rounded-lg border shadow-custom border-border-base relative">
                             <CardContent className="py-8 h-full flex items-center justify-center text-center text-muted-foreground">
                                 No posts yet. Create your first post!
                             </CardContent>
                         </Card>
-                    )}
+                    ) : null}
                 </div>
             </div>
         </PageLayout>

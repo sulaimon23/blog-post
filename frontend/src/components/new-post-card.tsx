@@ -19,9 +19,10 @@ interface NewPostCardProps {
     userId: string;
     onCreatePost: (title: string, body: string) => Promise<void>;
     isCreating?: boolean;
+    disabled?: boolean;
 }
 
-export function NewPostCard({ userId, onCreatePost, isCreating }: NewPostCardProps) {
+export function NewPostCard({ userId, onCreatePost, isCreating, disabled }: NewPostCardProps) {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [title, setTitle] = useState('');
     const [body, setBody] = useState('');
@@ -36,11 +37,21 @@ export function NewPostCard({ userId, onCreatePost, isCreating }: NewPostCardPro
         setIsDialogOpen(false);
     };
 
+    const handleCardClick = () => {
+        if (!disabled) {
+            setIsDialogOpen(true);
+        }
+    };
+
     return (
         <Fragment>
             <Card
-                className="flex flex-col h-[293px] w-full md:w-[270px] items-center justify-center gap-2 bg-white rounded-lg border-dashed shadow-none border-border-base cursor-pointer hover:bg-muted transition-colors"
-                onClick={() => setIsDialogOpen(true)}
+                className={`flex flex-col h-[293px] w-full md:w-[270px] items-center justify-center gap-2 bg-white rounded-lg border-dashed shadow-none border-border-base transition-colors ${
+                    disabled
+                        ? 'opacity-50 cursor-not-allowed'
+                        : 'cursor-pointer hover:bg-muted'
+                }`}
+                onClick={handleCardClick}
             >
                 <CardContent className="flex flex-col items-center justify-center gap-2 p-6">
                     <PlusCircle className="w-6 h-6 text-muted-foreground" />
