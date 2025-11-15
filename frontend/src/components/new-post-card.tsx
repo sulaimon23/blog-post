@@ -11,6 +11,7 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { PlusCircle } from 'lucide-react';
 import { Fragment, useState } from 'react';
@@ -46,11 +47,10 @@ export function NewPostCard({ userId, onCreatePost, isCreating, disabled }: NewP
     return (
         <Fragment>
             <Card
-                className={`flex flex-col h-[293px] w-full md:w-[270px] items-center justify-center gap-2 bg-white rounded-lg border-dashed shadow-none border-border-base transition-colors ${
-                    disabled
-                        ? 'opacity-50 cursor-not-allowed'
-                        : 'cursor-pointer hover:bg-muted'
-                }`}
+                className={`flex flex-col h-[293px] w-full md:w-[270px] items-center justify-center gap-2 bg-white rounded-lg border-dashed shadow-none border-border-base transition-colors ${disabled
+                    ? 'opacity-50 cursor-not-allowed'
+                    : 'cursor-pointer hover:bg-muted'
+                    }`}
                 onClick={handleCardClick}
             >
                 <CardContent className="flex flex-col items-center justify-center gap-2 p-6">
@@ -64,29 +64,29 @@ export function NewPostCard({ userId, onCreatePost, isCreating, disabled }: NewP
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle className="text-left">New Post</DialogTitle>
+                        <DialogTitle className="text-left text-4xl font-medium">New Post</DialogTitle>
                     </DialogHeader>
                     <div className="space-y-4 py-4">
                         <div className="space-y-2">
-                            <label htmlFor="title" className="text-sm font-medium">
-                                Title
-                            </label>
+                            <Label htmlFor="title">
+                                Post Title
+                            </Label>
                             <Input
                                 id="title"
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
-                                placeholder="Enter post title"
+                                placeholder="Give your post a title"
                             />
                         </div>
                         <div className="space-y-2">
-                            <label htmlFor="body" className="text-sm font-medium">
-                                Body
-                            </label>
+                            <Label htmlFor="body">
+                                Post Body
+                            </Label>
                             <Textarea
                                 id="body"
                                 value={body}
                                 onChange={(e) => setBody(e.target.value)}
-                                placeholder="Enter post body"
+                                placeholder="Write something mind-blowing"
                                 rows={6}
                             />
                         </div>
