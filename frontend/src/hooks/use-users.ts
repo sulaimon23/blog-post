@@ -48,6 +48,7 @@ export function useUsersWithPagination(
         users: Array.isArray(users) ? users : [],
         count: typeof count === 'number' ? count : 0,
         isLoading: usersQuery.isLoading || countQuery.isLoading,
+        isFetching: usersQuery.isFetching || countQuery.isFetching,
         isError: usersQuery.isError || countQuery.isError,
         error: usersQuery.error || countQuery.error,
         refetch: () => {

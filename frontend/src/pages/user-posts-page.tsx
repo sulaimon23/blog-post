@@ -50,7 +50,7 @@ export default function UserPostsPage() {
     return (
         <PageLayout>
             <div className="flex flex-col items-start justify-center gap-11">
-                <header className="flex flex-col w-full max-w-sm items-start gap-6">
+                <header className="flex flex-col w-full  items-start gap-6">
                     <Breadcrumb>
                         <BreadcrumbList>
                             <BreadcrumbItem>

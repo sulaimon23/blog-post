@@ -19,7 +19,7 @@ import { useNavigate } from 'react-router-dom';
 export default function UsersPage() {
     const navigate = useNavigate();
     const [pageNumber, setPageNumber] = useState<number>(PAGINATION.DEFAULT_PAGE_NUMBER);
-    const { users, count, isLoading, isError, error } = useUsersWithPagination(
+    const { users, count, isLoading, isFetching, isError, error } = useUsersWithPagination(
         pageNumber,
         PAGINATION.DEFAULT_PAGE_SIZE
     );
@@ -93,7 +93,7 @@ export default function UsersPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {isLoading ? (
+                            {isLoading || isFetching ? (
                                 <TableRow>
                                     <TableCell className='h-54' colSpan={3}>
                                         <Loader />
@@ -105,7 +105,7 @@ export default function UsersPage() {
                                         {error instanceof Error ? error.message : 'Failed to load users'}
                                     </TableCell>
                                 </TableRow>
-                            ) : users.length === 0 ? (
+                            ) : !isLoading && !isFetching && users.length === 0 ? (
                                 <TableRow>
                                     <TableCell colSpan={3} className="text-center">
                                         No users found
