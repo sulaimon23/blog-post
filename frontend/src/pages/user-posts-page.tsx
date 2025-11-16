@@ -47,6 +47,15 @@ export default function UserPostsPage() {
         await deletePostMutation.mutateAsync(postId);
     };
 
+    // Show only loader when loading
+    if (postsLoading || postsFetching) {
+        return (
+            <div className="flex items-center justify-center min-h-screen w-full">
+                <Loader />
+            </div>
+        );
+    }
+
     return (
         <PageLayout>
             <div className="flex flex-col items-start justify-center gap-11">
@@ -88,11 +97,7 @@ export default function UserPostsPage() {
                             disabled={postsLoading || postsFetching}
                         />
                     )}
-                    {postsLoading || postsFetching ? (
-                        <div className="col-span-full">
-                            <Loader />
-                        </div>
-                    ) : postsError ? (
+                    {postsError ? (
                         <Card className="col-span-full">
                             <CardContent className="py-8 text-center text-destructive">
                                 Failed to load posts
@@ -102,10 +107,10 @@ export default function UserPostsPage() {
                         posts.map((post) => (
                             <Card
                                 key={post.id}
-                                className="flex flex-col h-[293px] w-full md:w-[270px] bg-white rounded-lg border shadow-custom! border-border-base relative"
+                                className="flex flex-col h-[293px] w-full md:w-[270px] bg-white rounded-lg border hover:shadow-custom border-border-base relative transition-shadow"
                             >
-                                <CardContent className="flex flex-col overflow-hidden items-start gap-4 p-6 h-full">
-                                    <h2 className="text-lg-medium line-clamp-3 text-text-base">
+                                <CardContent className="flex flex-col overflow-hidden items-start gap-4 p-6 h-full relative">
+                                    <h2 className="text-lg-medium line-clamp-3 text-text-base pr-8">
                                         {post.title}
                                     </h2>
                                     <p className="flex-1 text-sm-regular text-text-base overflow-hidden overflow-ellipsis"
@@ -118,14 +123,15 @@ export default function UserPostsPage() {
                                         size="sm"
                                         onClick={() => handleDeletePost(post.id)}
                                         disabled={deletePostMutation.isPending}
-                                        className="text-destructive hover:text-destructive hover:bg-destructive/10 absolute top-1 right-1 z-10"                                    >
+                                        className="text-destructive hover:text-destructive hover:bg-destructive/10 absolute top-1 right-1 z-20 bg-white/80 backdrop-blur-sm"
+                                    >
                                         <Trash2 className="h-4 w-4" />
                                     </Button>
                                 </CardContent>
                             </Card>
                         ))
                     ) : !postsLoading && !postsFetching && Array.isArray(posts) && posts.length === 0 ? (
-                        <Card className="flex flex-col h-[293px] w-full md:w-[270px] bg-white rounded-lg border shadow-custom border-border-base relative">
+                        <Card className="flex flex-col h-[293px] w-full md:w-[270px] bg-white rounded-lg border hover:shadow-custom border-border-base relative transition-shadow">
                             <CardContent className="py-8 h-full flex items-center justify-center text-center text-muted-foreground">
                                 No posts yet. Create your first post!
                             </CardContent>

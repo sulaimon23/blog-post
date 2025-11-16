@@ -81,22 +81,24 @@ export default function UsersPage() {
                     <Table>
                         <TableHeader>
                             <TableRow className='border-border-base'>
-                                <TableHead className="max-w-96 text-sm-medium text-text-muted">
+                                <TableHead className="w-[30%] text-sm-medium text-text-muted">
                                     Full name
                                 </TableHead>
-                                <TableHead className="max-w-96 text-sm-medium text-text-muted">
+                                <TableHead className="w-[35%] text-sm-medium text-text-muted">
                                     Email address
                                 </TableHead>
-                                <TableHead className="max-w-96 text-sm-medium text-text-muted">
+                                <TableHead className="w-[35%] text-sm-medium text-text-muted">
                                     Address
                                 </TableHead>
                             </TableRow>
                         </TableHeader>
-                        <TableBody>
+                        <TableBody className="h-[216px]">
                             {isLoading || isFetching ? (
-                                <TableRow>
-                                    <TableCell className='h-54' colSpan={3}>
-                                        <Loader />
+                                <TableRow className="h-full">
+                                    <TableCell className='h-full' colSpan={3}>
+                                        <div className="h-full flex items-center justify-center">
+                                            <Loader />
+                                        </div>
                                     </TableCell>
                                 </TableRow>
                             ) : isError ? (
@@ -124,14 +126,14 @@ export default function UsersPage() {
                                             className="cursor-pointer border-border-base hover:bg-muted/50"
                                             onClick={() => handleRowClick(user.id)}
                                         >
-                                            <TableCell className="text-sm-normal text-text-base max-w-96 truncate" title={user.name}>
+                                            <TableCell className="w-[30%] text-sm-normal text-text-base truncate" title={user.name}>
                                                 {user.name}
                                             </TableCell>
-                                            <TableCell className="text-sm-normal text-text-base max-w-96 truncate" title={user.email}>
+                                            <TableCell className="w-[35%] text-sm-normal text-text-base truncate" title={user.email}>
                                                 {user.email}
                                             </TableCell>
                                             <TableCell
-                                                className="text-sm-normal text-text-base max-w-96 truncate"
+                                                className="w-[35%] text-sm-normal text-text-base truncate"
                                                 title={addressText}
                                             >
                                                 {addressText || 'No address'}
