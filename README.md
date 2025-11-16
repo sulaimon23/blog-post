@@ -68,6 +68,10 @@ VITE_API_BASE_URL=http://localhost:3001
 
 For Docker deployment, ensure `VITE_API_BASE_URL` points to your backend URL (e.g., `http://localhost:3001` or your production backend URL).
 
+## Run test
+```
+cd frontend && npm run test:run
+```
 
 # Web Developer Assignment
 
