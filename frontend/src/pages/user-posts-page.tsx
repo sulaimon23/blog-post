@@ -14,21 +14,31 @@ import {
     Card,
     CardContent,
 } from '@/components/ui/card';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
 import { useCreatePost, useDeletePost, usePosts } from '@/hooks/use-posts';
-import { useUsersWithPagination } from '@/hooks/use-users';
+import { useUser } from '@/hooks/use-users';
 import { mapUserResponseToUser } from '@/lib/utils';
-import { ChevronRight, Trash2 } from 'lucide-react';
+import { AlertTriangle, ChevronRight, Trash2 } from 'lucide-react';
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 export default function UserPostsPage() {
     const { userId } = useParams<{ userId: string }>();
     const navigate = useNavigate();
+    const [postToDelete, setPostToDelete] = useState<{ id: string; title: string } | null>(null);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
     const { data: posts, isLoading: postsLoading, isFetching: postsFetching, isError: postsError } = usePosts(
         userId
     );
-    const { users } = useUsersWithPagination(0, 1000);
-    const userData = Array.isArray(users) ? users.find((u) => u.id === userId) : undefined;
+    const { data: userData, isLoading: userLoading, isFetching: userFetching, isError: userError } = useUser(userId);
     const user = userData ? mapUserResponseToUser(userData) : undefined;
     const createPostMutation = useCreatePost();
     const deletePostMutation = useDeletePost(userId || '');
@@ -43,12 +53,25 @@ export default function UserPostsPage() {
         });
     };
 
-    const handleDeletePost = async (postId: string) => {
-        await deletePostMutation.mutateAsync(postId);
+    const handleDeleteClick = (postId: string, postTitle: string) => {
+        setPostToDelete({ id: postId, title: postTitle });
+        setIsDeleteDialogOpen(true);
     };
 
-    // Show only loader when loading
-    if (postsLoading || postsFetching) {
+    const handleDeleteConfirm = async () => {
+        if (!postToDelete) return;
+
+        await deletePostMutation.mutateAsync(postToDelete.id);
+        setIsDeleteDialogOpen(false);
+        setPostToDelete(null);
+    };
+
+    const handleDeleteCancel = () => {
+        setIsDeleteDialogOpen(false);
+        setPostToDelete(null);
+    };
+
+    if (postsLoading || postsFetching || userLoading || userFetching) {
         return (
             <div className="flex items-center justify-center min-h-screen w-full">
                 <Loader />
@@ -97,10 +120,12 @@ export default function UserPostsPage() {
                             disabled={postsLoading || postsFetching}
                         />
                     )}
-                    {postsError ? (
+                    {(postsError || userError) ? (
                         <Card className="col-span-full">
-                            <CardContent className="py-8 text-center text-destructive">
-                                Failed to load posts
+                            <CardContent className="py-6 text-center">
+                                <p className="text-sm text-destructive">
+                                    {postsError ? 'Failed to load posts' : 'Failed to load user information'}
+                                </p>
                             </CardContent>
                         </Card>
                     ) : Array.isArray(posts) && posts.length > 0 ? (
@@ -110,18 +135,20 @@ export default function UserPostsPage() {
                                 className="flex flex-col h-[293px] w-full md:w-[270px] bg-white rounded-lg border hover:shadow-custom border-border-base relative transition-shadow"
                             >
                                 <CardContent className="flex flex-col overflow-hidden items-start gap-4 p-6 h-full relative">
-                                    <h2 className="text-lg-medium line-clamp-3 text-text-base pr-8">
+                                    <h2 className="text-lg-medium text-ellipsis line-clamp-3 text-text-base pr-8 wrap-anywhere">
                                         {post.title}
                                     </h2>
-                                    <p className="flex-1 text-sm-regular text-text-base overflow-hidden overflow-ellipsis"
+                                    <p
+                                        className="flex-1 text-sm-regular text-text-base overflow-hidden line-clamp-4 wrap-anywhere"
                                         title={post.body}
                                     >
                                         {post.body}
                                     </p>
+
                                     <Button
                                         variant="ghost"
                                         size="sm"
-                                        onClick={() => handleDeletePost(post.id)}
+                                        onClick={() => handleDeleteClick(post.id, post.title)}
                                         disabled={deletePostMutation.isPending}
                                         className="text-destructive hover:text-destructive hover:bg-destructive/10 absolute top-1 right-1 z-20 bg-white/80 backdrop-blur-sm"
                                     >
@@ -139,6 +166,40 @@ export default function UserPostsPage() {
                     ) : null}
                 </div>
             </div>
+
+            <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                <DialogContent className="max-w-md">
+                    <DialogHeader>
+                        <div className="flex items-start gap-4">
+                            <div className="flex p-2 shrink-0 items-center justify-center rounded-full bg-destructive/10 ring-4 ring-destructive/5">
+                                <AlertTriangle className="h-5 w-5 text-destructive" strokeWidth={2} />
+                            </div>
+                            <div className="flex-1 space-y-2 pt-0.5">
+                                <DialogTitle className="text-left text-xl font-medium leading-tight">Delete Post</DialogTitle>
+                                <DialogDescription className="text-left text-sm text-muted-foreground">
+                                    This action cannot be undone as post will be permanently removed.
+                                </DialogDescription>
+                            </div>
+                        </div>
+                    </DialogHeader>
+                    <DialogFooter className="flex-row justify-end pt-4 gap-3">
+                        <Button
+                            variant="outline"
+                            onClick={handleDeleteCancel}
+                            disabled={deletePostMutation.isPending}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            variant="destructive"
+                            onClick={handleDeleteConfirm}
+                            disabled={deletePostMutation.isPending}
+                        >
+                            {deletePostMutation.isPending ? 'Deleting...' : 'Delete post'}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </PageLayout>
     );
 }

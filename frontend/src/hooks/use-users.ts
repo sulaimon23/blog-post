@@ -12,6 +12,19 @@ export function useUsers(params: PaginationParams) {
     });
 }
 
+export function useUser(userId: string | undefined) {
+    return useQuery({
+        queryKey: [QUERY_KEYS.USERS, userId],
+        queryFn: () => {
+            if (!userId) throw new Error('User ID is required');
+            return usersApi.getUserById(userId);
+        },
+        enabled: !!userId,
+        staleTime: 30000,
+        retry: 2,
+    });
+}
+
 export function useUsersCount() {
     return useQuery({
         queryKey: [QUERY_KEYS.USERS_COUNT],

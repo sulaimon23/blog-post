@@ -3,6 +3,7 @@ import { connection } from "../connection";
 import {
   selectCountOfUsersTemplate,
   selectUsersTemplate,
+  selectUserByIdTemplate,
 } from "./query-templates";
 import { User } from "./types";
 
@@ -32,6 +33,21 @@ export const getUsers = (
           reject(error);
         }
         resolve(results);
+      }
+    );
+  });
+
+export const getUserById = (userId: string): Promise<User | null> =>
+  new Promise((resolve, reject) => {
+    connection.get<User>(
+      selectUserByIdTemplate,
+      [userId],
+      (error: any, result: User | PromiseLike<User | null> | undefined) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve(result || null);
       }
     );
   });

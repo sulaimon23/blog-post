@@ -30,8 +30,9 @@ export function useCreatePost() {
             });
             toast.success('Post created successfully.');
         },
-        onError: () => {
-            toast.error('Failed to create post.');
+        onError: (error: any) => {
+            const errorMessage = error?.message || 'Failed to create post';
+            toast.error(errorMessage);
         },
     });
 }
@@ -47,8 +48,9 @@ export function useDeletePost(userId: string) {
             });
             toast.success('Post deleted successfully.');
         },
-        onError: () => {
-            toast.error('Failed to delete post.');
+        onError: (error: any) => {
+            const errorMessage = error?.message || 'Failed to delete post';
+            toast.error(errorMessage);
         },
     });
 }

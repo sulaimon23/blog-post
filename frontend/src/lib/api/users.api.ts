@@ -10,6 +10,10 @@ export const usersApi = {
         );
     },
 
+    async getUserById(userId: string): Promise<UserResponse> {
+        return apiClient.get<UserResponse>(`${API_ENDPOINTS.USERS}/${userId}`);
+    },
+
     async getUsersCount(): Promise<number> {
         const response = await apiClient.get<UsersCountResponse>(API_ENDPOINTS.USERS_COUNT);
         return response.count;

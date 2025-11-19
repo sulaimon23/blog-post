@@ -4,6 +4,11 @@ import axios, { type AxiosError, type AxiosInstance, type AxiosRequestConfig } f
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000;
 
+interface ErrorResponse {
+    error?: string;
+    message?: string;
+}
+
 class ApiClient {
     private client: AxiosInstance;
 
@@ -29,6 +34,35 @@ class ApiClient {
             (response) => response,
             async (error: AxiosError) => {
                 const config = error.config as AxiosRequestConfig & { _retry?: boolean; _retryCount?: number };
+
+                // Enhance error messages with meaningful information
+                if (error.response) {
+                    const status = error.response.status;
+                    const data = error.response.data as ErrorResponse;
+
+                    // Log detailed error information
+                    console.error(`API Error [${status}]:`, {
+                        url: config?.url,
+                        method: config?.method,
+                        status,
+                        message: data?.error || data?.message || error.message,
+                        data,
+                    });
+
+                    if (data?.error) {
+                        error.message = data.error;
+                    } else if (data?.message) {
+                        error.message = data.message;
+                    } else {
+                        error.message = `Request failed with status ${status}`;
+                    }
+                } else if (error.request) {
+                    console.error('Network Error:', {
+                        url: config?.url,
+                        message: error.message,
+                    });
+                    error.message = 'Network error: Unable to connect to the server. Please check your internet connection.';
+                }
 
                 if (config._retry || !this.shouldRetry(error)) {
                     return Promise.reject(error);

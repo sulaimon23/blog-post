@@ -1,6 +1,6 @@
 import { randomUUID } from "crypto";
 import { connection } from "../connection";
-import { deletePostTemplate, insertPostTemplate, selectPostsTemplate } from "./query-templates";
+import { deletePostTemplate, insertPostTemplate, selectPostsTemplate, selectPostByIdTemplate } from "./query-templates";
 import { CreatePostData, Post } from "./types";
 
 export const getPosts = (userId: string): Promise<Post[]> =>
@@ -11,6 +11,17 @@ export const getPosts = (userId: string): Promise<Post[]> =>
                 return;
             }
             resolve(results as Post[]);
+        });
+    });
+
+export const getPostById = (postId: string): Promise<Post | null> =>
+    new Promise((resolve, reject) => {
+        connection.get<Post>(selectPostByIdTemplate, [postId], (error: any, result: Post | PromiseLike<Post | null> | undefined) => {
+            if (error) {
+                reject(error);
+                return;
+            }
+            resolve(result || null);
         });
     });
 

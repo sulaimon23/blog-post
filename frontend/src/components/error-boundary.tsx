@@ -23,7 +23,13 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     }
 
     componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-        console.error('ErrorBoundary caught an error:', error, errorInfo);
+        // Log error details for debugging
+        console.error('ErrorBoundary caught an error:', {
+            error: error.message,
+            stack: error.stack,
+            componentStack: errorInfo.componentStack,
+            timestamp: new Date().toISOString(),
+        });
     }
 
     handleReset = () => {
@@ -37,6 +43,20 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                 return this.props.fallback;
             }
 
+            const errorMessage = this.state.error?.message || 'An unexpected error occurred';
+            const isNetworkError = errorMessage.toLowerCase().includes('network') || 
+                                  errorMessage.toLowerCase().includes('fetch') ||
+                                  errorMessage.toLowerCase().includes('timeout');
+            const isApiError = errorMessage.toLowerCase().includes('api') ||
+                              errorMessage.toLowerCase().includes('server');
+            
+            let displayMessage = errorMessage;
+            if (isNetworkError) {
+                displayMessage = 'Network error: Unable to connect to the server. Please check your internet connection and try again.';
+            } else if (isApiError) {
+                displayMessage = `Server error: ${errorMessage}. Please try again later or contact support if the issue persists.`;
+            }
+
             return (
                 <div className="flex items-center justify-center min-h-screen p-4">
                     <Card className="w-full max-w-md">
@@ -45,7 +65,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <p className="text-sm text-muted-foreground">
-                                {this.state.error?.message || 'An unexpected error occurred'}
+                                {displayMessage}
                             </p>
                             <Button onClick={this.handleReset} className="w-full">
                                 Go to Home

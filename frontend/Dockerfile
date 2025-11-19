@@ -3,7 +3,7 @@ FROM node:20-alpine
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci
+RUN npm ci --fetch-retries=5 --fetch-retry-factor=2
 
 COPY . .
 
