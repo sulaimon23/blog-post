@@ -12,12 +12,17 @@ import {
 import { PAGINATION } from '@/constants';
 import { useUsersWithPagination } from '@/hooks/use-users';
 import { formatAddress, mapUserResponseToUser } from '@/lib/utils';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 export default function UsersPage() {
     const navigate = useNavigate();
-    const [pageNumber, setPageNumber] = useState<number>(PAGINATION.DEFAULT_PAGE_NUMBER);
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const pageFromUrl = searchParams.get('page');
+    const pageNumber = pageFromUrl
+        ? Math.max(0, parseInt(pageFromUrl, 10) - 1)
+        : PAGINATION.DEFAULT_PAGE_NUMBER;
+
     const { users, count, isLoading, isFetching, isError, error } = useUsersWithPagination(
         pageNumber,
         PAGINATION.DEFAULT_PAGE_SIZE
@@ -30,7 +35,13 @@ export default function UsersPage() {
     };
 
     const handlePageChange = (newPage: number) => {
-        setPageNumber(newPage);
+        const newSearchParams = new URLSearchParams(searchParams);
+        if (newPage === PAGINATION.DEFAULT_PAGE_NUMBER) {
+            newSearchParams.delete('page');
+        } else {
+            newSearchParams.set('page', (newPage + 1).toString());
+        }
+        setSearchParams(newSearchParams);
     };
 
     return (

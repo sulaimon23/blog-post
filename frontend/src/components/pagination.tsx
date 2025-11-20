@@ -3,9 +3,9 @@ import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react';
 import { useMemo } from 'react';
 
 interface PaginationProps {
-    currentPage: number; // 0-indexed
+    currentPage: number;
     totalPages: number;
-    onPageChange: (page: number) => void; // page is 0-indexed
+    onPageChange: (page: number) => void;
 }
 
 export function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) {
@@ -14,7 +14,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
 
     const pageNumbers = useMemo(() => {
         const pages: number[] = [];
-        const currentPageNumber = currentPage + 1; // Convert to 1-indexed for display
+        const currentPageNumber = currentPage + 1;
 
         if (totalPages <= 5) {
             // Show all pages if 5 or fewer
@@ -85,10 +85,19 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
                 </Button>
                 <div className="flex items-center gap-0.5">
                     {pageNumbers.map((page, index) => {
-                        // Check if we need to show ellipsis before this page
                         const prevPage = index > 0 ? pageNumbers[index - 1].number : 0;
+                        const nextPage = index < pageNumbers.length - 1 ? pageNumbers[index + 1].number : totalPages + 1;
+
                         const showStartEllipsis = index === 0 && page.number > 2 && totalPages > 5;
-                        const showEndEllipsis = page.number - prevPage > 1 && totalPages > 5 && page.number < totalPages;
+                        const showEllipsisBefore = prevPage > 0 &&
+                            prevPage === 1 &&
+                            page.number - prevPage > 1 &&
+                            totalPages > 5 &&
+                            !(index < pageNumbers.length - 1 && pageNumbers[index + 1].number === totalPages);
+                        const showTrailingEllipsis = index < pageNumbers.length - 1 &&
+                            nextPage - page.number > 1 &&
+                            nextPage === totalPages &&
+                            totalPages > 5;
 
                         return (
                             <div key={page.number} className="flex items-center gap-0.5">
@@ -106,7 +115,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
                                         </div>
                                     </>
                                 )}
-                                {showEndEllipsis && (
+                                {showEllipsisBefore && (
                                     <div className="w-7 h-7 sm:w-9 sm:h-9 flex items-center justify-center rounded-md">
                                         <MoreHorizontal className="w-4 h-4 sm:w-6 sm:h-6" />
                                     </div>
@@ -115,14 +124,19 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
                                     variant={page.isActive ? 'outline' : 'ghost'}
                                     onClick={() => handlePageClick(page.number)}
                                     className={`w-8 h-8 sm:w-10 sm:h-10 items-center justify-center rounded-md ${page.isActive
-                                            ? 'bg-background border border-solid border-border-base'
-                                            : ''
+                                        ? 'bg-background border border-solid border-border-base'
+                                        : ''
                                         }`}
                                 >
                                     <span className="text-sm-medium text-text-base">
                                         {page.number}
                                     </span>
                                 </Button>
+                                {showTrailingEllipsis && (
+                                    <div className="w-7 h-7 sm:w-9 sm:h-9 flex items-center justify-center rounded-md">
+                                        <MoreHorizontal className="w-4 h-4 sm:w-6 sm:h-6" />
+                                    </div>
+                                )}
                             </div>
                         );
                     })}

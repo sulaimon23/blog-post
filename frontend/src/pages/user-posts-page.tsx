@@ -87,7 +87,7 @@ export default function UserPostsPage() {
                         <BreadcrumbList>
                             <BreadcrumbItem>
                                 <BreadcrumbLink
-                                    onClick={() => navigate('/')}
+                                    onClick={() => navigate(-1)}
                                     className="text-sm-normal text-text-muted cursor-pointer"
                                 >
                                     Users
