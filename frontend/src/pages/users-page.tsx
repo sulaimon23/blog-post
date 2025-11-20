@@ -54,10 +54,14 @@ export default function UsersPage() {
                     <Table >
                         <TableHeader>
                             <TableRow className='border-border-base'>
-                                <TableHead className="w-[30%] text-sm-medium text-text-muted">
+                                <TableHead
+                                    style={{ minWidth: '200px' }}
+                                    className="w-[30%] text-sm-medium text-text-muted">
                                     Full name
                                 </TableHead>
-                                <TableHead className="w-[35%] text-sm-medium text-text-muted">
+                                <TableHead
+                                    style={{ minWidth: '200px' }}
+                                    className="w-[35%] text-sm-medium text-text-muted">
                                     Email address
                                 </TableHead>
                                 <TableHead className="text-sm-medium text-text-muted"
